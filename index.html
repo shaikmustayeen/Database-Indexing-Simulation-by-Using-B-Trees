@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B+ Tree Database Indexing Simulator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">B+</div><div><strong>IndexLab</strong><small>DATABASE SIMULATOR</small></div></div>
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav-item active" data-view="dashboard"><span>▦</span> Dashboard</button>
+    <button class="nav-item" data-view="records"><span>▤</span> Records</button>
+    <button class="nav-item" data-view="visualizer"><span>⌘</span> Tree Visualizer</button>
+    <button class="nav-item" data-view="performance"><span>◷</span> Performance</button>
+    <div class="sidebar-bottom">
+      <div class="status-dot"></div><span>Local simulation active</span>
+      <small>Advanced Data Structures Project</small>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><div class="eyebrow">ADVANCED DATA STRUCTURES</div><h1 id="page-title">Dashboard</h1></div>
+      <div class="top-actions"><span class="pill"><i></i> B+ Tree · Order 4</span><button class="btn btn-outline" id="resetBtn">Reset demo data</button></div>
+    </header>
+
+    <section class="view active" id="dashboard-view">
+      <div class="welcome"><div><div class="eyebrow light">DATABASE INDEXING SIMULATION</div><h2>See how B+ Trees make searching faster.</h2><p>Insert, search, delete and explore indexed student records in an interactive environment.</p></div><div class="welcome-icon">B+</div></div>
+      <div class="stats-grid">
+        <article class="stat-card"><div class="stat-top"><span>Total records</span><b class="stat-icon blue">▤</b></div><strong id="statRecords">0</strong><small>Stored student entries</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Tree height</span><b class="stat-icon purple">⌁</b></div><strong id="statHeight">0</strong><small>Number of levels</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Leaf nodes</span><b class="stat-icon green">▱</b></div><strong id="statLeaves">0</strong><small>Linked data blocks</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Operations</span><b class="stat-icon orange">↗</b></div><strong id="statOps">0</strong><small>Operations this session</small></article>
+      </div>
+
+      <div class="content-grid">
+        <article class="panel">
+          <div class="panel-heading"><div><h3>Quick operations</h3><p>Perform an operation on the B+ Tree.</p></div><span class="subtle-tag">LIVE</span></div>
+          <form id="insertForm" class="operation-form">
+            <label>Student ID<input id="studentId" type="number" min="1" placeholder="e.g. 105" required /></label>
+            <label>Student name<input id="studentName" type="text" maxlength="40" placeholder="e.g. Ayesha Khan" required /></label>
+            <label>Department<input id="studentDept" type="text" maxlength="30" placeholder="e.g. Data Science" required /></label>
+            <button class="btn btn-primary" type="submit">＋ Insert record</button>
+          </form>
+          <div class="search-row"><label>Search by Student ID<input id="searchId" type="number" min="1" placeholder="Enter an ID" /></label><button class="btn btn-dark" id="searchBtn">Search index</button></div>
+          <div id="operationMessage" class="message">Ready. Choose an operation to get started.</div>
+        </article>
+        <article class="panel">
+          <div class="panel-heading"><div><h3>How indexing works</h3><p>A quick guide to the structure.</p></div></div>
+          <div class="concept-list">
+            <div class="concept"><span class="concept-number">01</span><div><b>Internal nodes</b><p>Store separator keys to guide the search path.</p></div></div>
+            <div class="concept"><span class="concept-number">02</span><div><b>Leaf nodes</b><p>Store sorted keys and point to actual records.</p></div></div>
+            <div class="concept"><span class="concept-number">03</span><div><b>Linked leaves</b><p>Make sequential and range queries efficient.</p></div></div>
+          </div>
+          <button class="text-link" data-goto="visualizer">Explore the tree visualization →</button>
+        </article>
+      </div>
+      <article class="panel recent-panel">
+        <div class="panel-heading"><div><h3>Recently stored records</h3><p>Latest records in the index.</p></div><button class="text-link" data-goto="records">View all records →</button></div>
+        <div class="table-wrap"><table><thead><tr><th>STUDENT ID</th><th>NAME</th><th>DEPARTMENT</th><th>STATUS</th></tr></thead><tbody id="recentRows"></tbody></table></div>
+      </article>
+    </section>
+
+    <section class="view" id="records-view">
+      <div class="section-intro"><div><h2>Student records</h2><p>Manage the records stored in the B+ Tree index.</p></div><span class="pill" id="recordCountPill">0 records</span></div>
+      <article class="panel">
+        <div class="toolbar"><input id="recordFilter" type="search" placeholder="Filter by ID, name or department..." /><button class="btn btn-outline" id="exportBtn">↓ Export CSV</button></div>
+        <div class="table-wrap"><table><thead><tr><th>STUDENT ID</th><th>NAME</th><th>DEPARTMENT</th><th>ACTIONS</th></tr></thead><tbody id="recordRows"></tbody></table></div>
+        <div class="table-foot" id="tableFoot">Records are stored locally in this browser.</div>
+      </article>
+    </section>
+
+    <section class="view" id="visualizer-view">
+      <div class="section-intro"><div><h2>B+ Tree visualizer</h2><p>Explore internal nodes, leaf nodes and linked-leaf traversal.</p></div><span class="pill">Maximum 3 keys per node</span></div>
+      <article class="panel">
+        <div class="visual-toolbar"><div class="legend"><span><i class="legend-internal"></i> Internal node</span><span><i class="legend-leaf"></i> Leaf node</span></div><button class="btn btn-outline" id="fitTreeBtn">↗ Fit tree</button></div>
+        <div class="tree-scroll"><svg id="treeSvg" role="img" aria-label="B plus tree diagram"></svg></div>
+        <div class="tree-caption"><span>Root → Internal nodes → Leaf nodes</span><span>Leaf nodes are connected from left to right.</span></div>
+      </article>
+      <article class="panel animation-panel">
+        <div class="panel-heading"><div><h3>Operation walkthrough</h3><p>Step through the latest insert, search or delete operation.</p></div><span class="subtle-tag">INTERACTIVE</span></div>
+        <div class="step-status"><span class="step-type" id="stepType">Ready</span><b id="stepCounter">No operation loaded</b></div>
+        <div class="step-description" id="stepDescription">Perform an insert, search or delete operation to see how the B+ Tree processes it, one step at a time.</div>
+        <div class="step-controls"><button class="btn btn-outline" id="prevStepBtn" disabled>← Previous</button><button class="btn btn-primary" id="playStepsBtn">▶ Play</button><button class="btn btn-outline" id="nextStepBtn" disabled>Next →</button></div>
+        <p class="step-hint">Highlighted nodes indicate the node involved in the current step. You can also use Play to move through the steps automatically.</p>
+      </article>
+      <article class="panel"><div class="panel-heading"><div><h3>Range search</h3><p>Retrieve all records whose IDs fall within a range.</p></div></div>
+        <div class="range-form"><label>From ID<input id="rangeFrom" type="number" min="1" placeholder="100" /></label><label>To ID<input id="rangeTo" type="number" min="1" placeholder="150" /></label><button class="btn btn-primary" id="rangeBtn">Run range search</button></div>
+        <div id="rangeResults" class="range-results">Enter a range to view matching records.</div>
+      </article>
+    </section>
+
+    <section class="view" id="performance-view">
+      <div class="section-intro"><div><h2>Performance analysis</h2><p>Compare the number of key comparisons for two search methods.</p></div><span class="pill">Theoretical operation count</span></div>
+      <div class="stats-grid performance-stats">
+        <article class="stat-card"><div class="stat-top"><span>Linear comparisons</span><b class="stat-icon orange">≋</b></div><strong id="linearCount">—</strong><small>Sequential scan baseline</small></article>
+        <article class="stat-card"><div class="stat-top"><span>B+ Tree comparisons</span><b class="stat-icon green">⌁</b></div><strong id="treeCount">—</strong><small>Index traversal + leaf scan</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Comparisons saved</span><b class="stat-icon blue">↗</b></div><strong id="savedCount">—</strong><small>For the last search</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Efficiency gain</span><b class="stat-icon purple">％</b></div><strong id="gainCount">—</strong><small>Based on comparisons</small></article>
+      </div>
+      <article class="panel"><div class="panel-heading"><div><h3>Run a benchmark</h3><p>Search for an existing or missing student ID.</p></div></div>
+        <div class="benchmark-row"><label>Student ID<input id="benchmarkId" type="number" min="1" placeholder="Enter student ID" /></label><button class="btn btn-primary" id="benchmarkBtn">Compare search methods</button></div>
+        <div class="bar-comparison"><div class="bar-label"><span>Linear search</span><b id="linearLabel">—</b></div><div class="bar-track"><div class="bar-fill linear-fill" id="linearBar"></div></div><div class="bar-label"><span>B+ Tree search</span><b id="treeLabel">—</b></div><div class="bar-track"><div class="bar-fill tree-fill" id="treeBar"></div></div></div>
+        <p class="note">Note: This simulator compares key comparisons, not actual disk I/O or wall-clock execution time. A B+ Tree typically provides O(log n) search and efficient range queries.</p>
+      </article>
+    </section>
+    <footer>IndexLab · Database Indexing Simulation Using B+ Trees · Built for Advanced Data Structures</footer>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
